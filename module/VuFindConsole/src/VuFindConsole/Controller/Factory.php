@@ -1,10 +1,10 @@
 <?php
 /**
- * Pazpar2 Record Controller
+ * Factory for controllers.
  *
  * PHP version 5
  *
- * Copyright (C) Villanova University 2010.
+ * Copyright (C) Villanova University 2014.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 2,
@@ -23,35 +23,42 @@
  * @package  Controller
  * @author   Demian Katz <demian.katz@villanova.edu>
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
- * @link     https://vufind.org Main Site
+ * @link     https://vufind.org/wiki/development Wiki
  */
-namespace VuFind\Controller;
-use Zend\ServiceManager\ServiceLocatorInterface;
+namespace VuFindConsole\Controller;
+use Zend\ServiceManager\ServiceManager;
 
 /**
- * Pazpar2 Record Controller
+ * Factory for controllers.
  *
  * @category VuFind
  * @package  Controller
- * @author   Chris Hallberg <challber@villanova.edu>
+ * @author   Demian Katz <demian.katz@villanova.edu>
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
- * @link     https://vufind.org Main Site
+ * @link     https://vufind.org/wiki/development Wiki
+ *
+ * @codeCoverageIgnore
  */
-class Pazpar2recordController extends AbstractRecord
+class Factory
 {
     /**
-     * Constructor
+     * Construct a generic controller.
      *
-     * @param ServiceLocatorInterface $sm Service locator
+     * @param string $name Method name being called
+     * @param array  $args Method arguments
+     *
+     * @return object
      */
-    public function __construct(ServiceLocatorInterface $sm)
+    public static function __callStatic($name, $args)
     {
-        throw new \Exception('Pazpar2 record view not supported.');
-
-        // Override some defaults:
-        $this->searchClassId = 'Pazpar2';
-
-        // Call standard record controller initialization:
-        parent::__construct($sm);
+        $class = __NAMESPACE__ . '\\' . substr($name, 3);
+        if (!class_exists($class)) {
+            throw new \Exception('Cannot construct ' . $class);
+        }
+        if (!($args[0] instanceof ServiceManager)) {
+            throw new \Exception('Service manager missing');
+        }
+        $sm = $args[0];
+        return new $class($sm->getServiceLocator());
     }
 }
