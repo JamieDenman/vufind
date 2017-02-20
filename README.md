@@ -4,6 +4,8 @@ VuFind
 
 Introduction
 ------------
+This is the Falmouth Exeter Plus fork of VuFind
+
 VuFind is an open source discovery environment for searching a collection of
 records.  To learn more, visit https://vufind.org.
 
